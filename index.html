@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هدية خاصة لـ ويل ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffc0cb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* خلفية القلوب المتحركة */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -20px;
+            background-color: rgba(233, 30, 99, 0.25);
+            transform: rotate(-45deg);
+            animation: floatUp 6s linear infinite;
+        }
+
+        .heart::before, .heart::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            border-radius: 50%;
+        }
+
+        .heart::before { top: -50%; left: 0; }
+        .heart::after { top: 0; left: 50%; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(-45deg) scale(0.6); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(-45deg) scale(1.2); opacity: 0; }
+        }
+
+        /* حاوية الهدية الرئيسية */
+        .gift-container {
+            position: relative;
+            z-index: 2;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(219, 112, 147, 0.2);
+            width: 92%;
+            max-width: 520px;
+            text-align: center;
+            border: 2px solid #ffb6c1;
+            overflow: hidden;
+        }
+
+        /* الشاشات وانتقالاتها */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.85) translateY(30px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .screen.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* الظرف التفاعلي */
+        .envelope-wrapper {
+            cursor: pointer;
+            padding: 15px;
+            transition: transform 0.3s;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            width: 140px;
+            height: 95px;
+            background: #ff69b4;
+            position: relative;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+            margin: 0 auto 15px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-top: 55px solid #ff1493;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope-letter {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ffb6c1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 10px;
+            animation: slideUpLetter 1s ease forwards;
+        }
+
+        @keyframes slideUpLetter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-icon {
+            font-size: 38px;
+            color: #ff1493;
+            margin-bottom: 8px;
+            animation: bounceIcon 2s infinite ease-in-out;
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* تنسيق الصور بتوزيع أنيق */
+        .photos-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .gift-img {
+            width: 110px;
+            height: 130px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #ff69b4;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gift-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.5);
+        }
+
+        /* صورة فردية للشاشة الثالثة */
+        .single-gift-img {
+            width: 140px;
+            height: 160px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid #ff69b4;
+            box-shadow: 0 6px 15px rgba(255, 105, 180, 0.3);
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .single-gift-img:hover {
+            transform: scale(1.05);
+        }
+
+        /* نافذة تكبير الصورة (Modal) */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal img {
+            max-width: 85%;
+            max-height: 85vh;
+            border-radius: 15px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+            animation: zoomInModal 0.3s ease;
+        }
+
+        @keyframes zoomInModal {
+            from { transform: scale(0.6); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* الأفاتار المشترك */
+        .avatar-combined {
+            width: 170px;
+            height: 105px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #ff1493;
+            box-shadow: 0 6px 15px rgba(255, 20, 147, 0.35);
+            margin-bottom: 8px;
+            animation: pulseAvatar 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseAvatar {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        h2 {
+            color: #d81b60;
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        p {
+            color: #444;
+            margin-bottom: 12px;
+            line-height: 1.7;
+            font-size: 13.5px;
+            max-height: 130px;
+            overflow-y: auto;
+            padding: 0 5px;
+        }
+
+        /* صندوق كلمات الأغنية الثانية */
+        .lyrics-box {
+            max-height: 85px;
+            overflow-y: auto;
+            background: #fff0f5;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ffb6c1;
+            font-style: italic;
+            color: #c71585;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1.5;
+            white-space: pre-line;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn {
+            background-color: #ff1493;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: #d81b60;
+            transform: translateY(-2px);
+        }
+
+        .auto-indicator {
+            font-size: 11px;
+            color: #d81b60;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- خلفية القلوب المتحركة -->
+    <div class="floating-hearts" id="heartsContainer"></div>
+
+    <!-- نافذة تكبير الصورة عند الضغط عليها -->
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImg" src="" alt="صورة مكبرة">
+    </div>
+
+    <!-- مشغلات الصوت -->
+    <audio id="bgMusic" src="song.mp3" preload="auto" loop></audio>
+    <audio id="favMusic" src="fav-song.mp3" preload="auto"></audio>
+
+    <!-- حاوية الهدية -->
+    <div class="gift-container">
+        
+        <!-- الشاشة الأولى: الظرف الوردي وتلاشيه -->
+        <div class="screen active" id="screen1">
+            <div class="envelope-wrapper" onclick="openEnvelope()">
+                <div class="envelope"></div>
+                <div style="font-size: 14px; color: #d81b60; font-weight: bold;">اضغطي لفتح الظرف يا ويل 💌</div>
+            </div>
+            <div class="envelope-letter" id="envelopeText" style="display: none;">
+                <h2>إلى أسطورة قلبي، ويل ❤️</h2>
+                <p>هذه رسالة خُطت بماء الورد وتأملت الحروف طويلاً لتليق بجمال روحكِ ونقاء أيامنا معاً...</p>
+            </div>
+            <div class="auto-indicator" id="envIndicator">✨ انقري على الظرف لتبدأ الحكاية...</div>
+        </div>
+
+        <!-- الشاشة الثانية: صور الكلام الطويل المعبر -->
+        <div class="screen" id="screen2">
+            <div class="photos-grid">
+                <img src="photo1.jpg" alt="صورة 1" class="gift-img" onclick="openModal(this.src)">
+                <img src="photo2.jpg" alt="صورة 2" class="gift-img" onclick="openModal(this.src)">
+            </div>
+            <h2>نبضات حنان لا تنتهي ✨</h2>
+            <p>إلى رفيقة الدرب وأعظم صديقة عرفتها؛ يا ويل، وجودكِ في حياتي ليس مجرد صدفة جميلة، بل هو النور الذي يضيء عتمة الأيام، والكتف الذي أستند عليه حين تشتد بي الأقدار. كل تفصيلة معكِ تشبه الأغاني الهادئة التي لا تمل الأذن من سماعها، وكل ضحكة تشاركناها سكنت زاوية دافئة في روحي. أردت في هذه المساحة أن أقول لكِ شكراً لأنكِ أنتِ، ولأنكِ دائماً الأمان الذي لا يزول مهما تبدلت الظروف وتغيرت الأماكن.</p>
+            <div class="auto-indicator">✨ يتم الانتقال تلقائياً (اضغطي على أي صورة لتكبيرها)...</div>
+        </div>
+
+        <!-- الشاشة الثالثة: الصورة الثالثة والكلام الطويل الرائع -->
+        <div class="screen" id="screen3">
+            <img src="photo3.jpg" alt="صورة 3" class="single-gift-img" onclick="openModal(this.src)">
+            <h2>عالم من الدفء والسكينة 🤍</h2>
+            <p>مهما كتبت من كلمات ومهما حبرت من عبارات، فلن أستطيع أن أوفي حق هذه الأخوة والصداقة التي تملأ قلبي بهجة. يا ويل، أنتِ الصديقة التي تجعل الحياة تبدو أبسط، والأحلام أقرب، والكون أوسع وأرحب. دمتِ لي سنداً لا يميل، وقلباً أبيض لا يتغير، ورفيقة عمر أفتخر بها طوال السنين. أتمنى أن تبقى ضحكتكِ تملأ الدنيا سعادة، وأن نظل معا نعبر دروب الحياة يداً بيد، لأن الحياة بجانبكِ لها طعم آخر لا يُصف ولا يُعوض بأي ثمن.</p>
+            <div class="auto-indicator">✨ يتلاشى الصوت تدريجياً لتبدأ النهاية الساحرة...</div>
+        </div>
+
+        <!-- الشاشة الرابعة والأخيرة: الأفاتار والأغنية الثانية والكلمات المتزامنة -->
+        <div class="screen" id="screen4">
+            <img src="avatar.jpg" alt="الأفاتار المشترك" class="avatar-combined">
+            <h2>Heartbeat 🎶</h2>
+            
+            <div class="lyrics-box" id="lyricsDisplay">
+                Tell me I'm the one...
+            </div>
+
+            <button class="btn" onclick="restartShow()">إعادة العرض 🎁</button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        const totalScreens = 4;
+        let autoTimer;
+        let isStarted = false;
+
+        const music1 = document.getElementById('bgMusic');
+        const music2 = document.getElementById('favMusic');
+
+        const lyricsLines = [
+            { time: 0, text: "Tell me I'm the one" },
+            { time: 4, text: "Every time I fell in love it went all wrong" },
+            { time: 9, text: "You're my only one" },
+            { time: 13, text: "Moon and sun, we've just begun to belong" },
+            { time: 18, text: "Heartbeat..." },
+            { time: 22, text: "Tell me what you need" },
+            { time: 27, text: "Hold me ❤️" }
+        ];
+
+        // فتح الظرف وبدء العرض التلقائي
+        function openEnvelope() {
+            if (isStarted) return;
+            isStarted = true;
+
+            document.getElementById('envelopeText').style.display = 'block';
+            document.getElementById('envIndicator').textContent = "✨ جاري فتح الرسالة...";
+            
+            music1.volume = 1.0;
+            music1.play().catch(e => console.log("Autoplay blocked"));
+
+            // الانتقال للشاشة الثانية بعد قراءة رسالة الظرف بـ 3.5 ثانية
+            setTimeout(() => {
+                currentScreen = 2;
+                showScreen(currentScreen);
+                startAutoPlay();
+            }, 3500);
+        }
+
+        function startAutoPlay() {
+            autoTimer = setInterval(() => {
+                currentScreen++;
+                if (currentScreen > totalScreens) {
+                    currentScreen = 1;
+                    restartShow();
+                    return;
+                }
+                showScreen(currentScreen);
+            }, 11000); // زُيد الوقت لـ 11 ثانية لتتمكني من قراءة الكلام الطويل براحتكِ
+        }
+
+        function showScreen(screenNum) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('screen' + screenNum).classList.add('active');
+
+            if (screenNum === 3) {
+                fadeAudioOut(music1);
+            }
+
+            if (screenNum === 4) {
+                music1.pause();
+                music2.currentTime = 0;
+                music2.volume = 1.0;
+                music2.play().catch(e => console.log("Autoplay blocked"));
+                startLyricsSync();
+            } else {
+                music2.pause();
+            }
+        }
+
+        function fadeAudioOut(audio) {
+            let step = audio.volume / 15;
+            let fadeInterval = setInterval(() => {
+                if (audio.volume > step) {
+                    audio.volume -= step;
+                } else {
+                    audio.volume = 0;
+                    audio.pause();
+                    clearInterval(fadeInterval);
+                }
+            }, 400);
+        }
+
+        function startLyricsSync() {
+            const lyricsBox = document.getElementById('lyricsDisplay');
+            
+            music2.ontimeupdate = () => {
+                let currentTime = music2.currentTime;
+                let currentLine = lyricsLines.slice().reverse().find(l => currentTime >= l.time);
+                if (currentLine) {
+                    lyricsBox.textContent = currentLine.text;
+                }
+            };
+        }
+
+        // دوال تكبير الصور (Modal)
+        function openModal(imgSrc) {
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function restartShow() {
+            clearInterval(autoTimer);
+            music2.pause();
+            isStarted = false;
+            currentScreen = 1;
+            document.getElementById('envelopeText').style.display = 'none';
+            document.getElementById('envIndicator').textContent = "✨ انقري على الظرف لتبدأ الحكاية...";
+            showScreen(1);
+        }
+
+        function createHeart() {
+            const container = document.getElementById('heartsContainer');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            const size = Math.random() * 20 + 10 + 'px';
+            heart.style.width = size;
+            heart.style.height = size;
+            heart.style.left = Math.random() * 100 + 'vw';
+            
+            const duration = Math.random() * 3 + 4 + 's';
+            heart.style.animationDuration = duration;
+
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createHeart, 400);
+    </script>
+</body>
+</html>
